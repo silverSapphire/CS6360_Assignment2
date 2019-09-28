@@ -6,7 +6,7 @@ public class VRMirror : MonoBehaviour {
 
     //True = mirror
     //False = matching
-    bool mirroring;
+    public bool mirroring;
 
     Vector3 lastPosition;
     Quaternion lastRotation;
@@ -14,14 +14,13 @@ public class VRMirror : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-
         lastPosition = transform.position;
 	}
 	
 	// Update is called once per frame
 	void Update () {
 		
-        if(Input.GetKeyDown("M"))
+        if(Input.GetKeyDown("m"))
         {
             mirroring = !mirroring;
         }
@@ -31,32 +30,27 @@ public class VRMirror : MonoBehaviour {
         else
             match();
 
-        lastPosition = this.transform.position;
-        lastRotation = this.transform.rotation;
+        lastPosition = Camera.main.transform.position;
+        lastRotation = Camera.main.transform.rotation;
 	}
 
     void mirror()
     {
-
         //Position.
-        Vector3 deltaPosition = this.transform.position - lastPosition;
-        Vector3 v = cube.transform.position - this.transform.position;
-        v = v.normalized;
-
-        cube.transform.position =
-            cube.transform.position + deltaPosition - Vector3.Dot(deltaPosition, v) * v * 2;
-
+        Vector3 deltaPosition = Camera.main.transform.position - lastPosition;
+        cube.transform.position = cube.transform.position + new Vector3(deltaPosition.x, deltaPosition.y, -deltaPosition.z);
         //Rotation.
-        Quaternion deltaRotation = this.transform.rotation * Quaternion.Inverse(lastRotation); //-?
-
+        Vector3 deltaRotation = Camera.main.transform.rotation.eulerAngles - lastRotation.eulerAngles;
+        cube.transform.rotation = Quaternion.Euler(cube.transform.rotation.eulerAngles + new Vector3(-deltaRotation.x,
+            -deltaRotation.y, deltaRotation.z));
     }
 
     void match()
     {
-        Vector3 deltaPosition = this.transform.position - lastPosition;
-        Quaternion deltaRotation = this.transform.rotation * Quaternion.Inverse(lastRotation); //-?
-
+        //Position.
+        Vector3 deltaPosition = Camera.main.transform.position - lastPosition;
         cube.transform.position = cube.transform.position + deltaPosition;
-        cube.transform.rotation = cube.transform.rotation * deltaRotation;
+        //Rotation.
+        cube.transform.rotation = Camera.main.transform.rotation;
     }
 }
