@@ -12,6 +12,8 @@ public class GenerateStimuli : MonoBehaviour
     public float z1;
     public float z2;
 
+    public float timeSincePressed;
+    bool switched = true;
 
     // Start is called before the first frame update
     void Start()
@@ -33,10 +35,25 @@ public class GenerateStimuli : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        return;
+
+        timeSincePressed += Time.deltaTime;
+
         if (Input.GetKeyDown("s"))
         {
             activated = true;
+
+            timeSincePressed = 0;
+            switched = false;
+
+            red_sphere.GetComponent<MeshRenderer>().enabled = !red_sphere.GetComponent<MeshRenderer>().enabled;
+        }
+
+        if(!switched && timeSincePressed >= 2)
+        {
+            blue_one.GetComponent<MeshRenderer>().enabled = !blue_one.GetComponent<MeshRenderer>().enabled;
+            blue_two.GetComponent<MeshRenderer>().enabled = !blue_two.GetComponent<MeshRenderer>().enabled;
+
+            switched = true;
         }
 
         if (!activated)
