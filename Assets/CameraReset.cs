@@ -13,8 +13,9 @@ public class CameraReset : MonoBehaviour {
 		
         if(Input.GetKeyDown("tab"))
         {
-            Camera.main.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
-            UnityEngine.XR.InputTracking.Recenter();
+            //Camera.main.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            //UnityEngine.XR.InputTracking.Recenter();
+            this.transform.localPosition = -Camera.main.transform.localPosition;
         }
     }
 }

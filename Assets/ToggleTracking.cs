@@ -10,6 +10,7 @@ public class ToggleTracking : MonoBehaviour
     public bool trackPosition = true;
 
     Vector3 lastPosition;
+    Quaternion lastRotation;
 
     // Start is called before the first frame update
     void Start()
@@ -23,38 +24,42 @@ public class ToggleTracking : MonoBehaviour
         if(Input.GetKeyDown("r"))
         {
             trackRotation = !trackRotation;
+            lastRotation = Camera.main.transform.rotation;
+
+            if (!trackPosition && !trackRotation)
+                transform.localScale = Vector3.zero;
+            else
+                transform.localScale = Vector3.one;
         }
 
-        if(!trackRotation)
+        if (!trackRotation)
         {
-            transform.localRotation = Quaternion.Inverse(InputTracking.GetLocalRotation(XRNode.CenterEye));
+            transform.rotation = lastRotation * Quaternion.Inverse(Camera.main.transform.localRotation);
+
+            //transform.Translate(-Camera.main.transform.position);
+            //transform.Rotate(Quaternion.Inverse(Camera.main.transform.rotation).eulerAngles, Space.World);
+            //transform.Rotate(Quaternion.Inverse(transform.rotation).eulerAngles, Space.World);
+            //transform.Rotate(Quaternion.Inverse(Camera.main.transform.localRotation).eulerAngles, Space.World);
+            //transform.Rotate(lastRotation.eulerAngles, Space.World);
+            //transform.Rotate(Camera.main.transform.rotation.eulerAngles, Space.World);
+            //transform.Translate(Camera.main.transform.position);
         }
 
-        if(Input.GetKeyDown("p"))
+        if (Input.GetKeyDown("p"))
         {
             trackPosition = !trackPosition;
-            
-            if (trackPosition)
-                transform.localScale = Vector3.one;
-            else
+            lastPosition = Camera.main.transform.position;
+            //InputTracking.disablePositionalTracking = !trackPosition;
+            if (!trackPosition && !trackRotation)
                 transform.localScale = Vector3.zero;
-
+            else
+                transform.localScale = Vector3.one;
         }
 
-        if (!trackPosition)
+        if (!trackPosition && trackRotation)
         {
-            //Debug.Log("Not tracking position!");
-            //Vector3 deltaPosition = lastPosition - Camera.main.transform.position;
-            //Camera.main.transform.SetPositionAndRotation(Camera.main.transform.position + deltaPosition,
-            //    Camera.main.transform.rotation);
-            //Camera.main.transform.position += deltaPosition ;
-            //transform.localPosition = lastPosition - Camera.main.transform.localPosition;
-            //transform.position = -InputTracking.GetLocalPosition(XRNode.CenterEye);
-
-            //Matrix4x4 m = Matrix4x4.TRS(new Vector3(0, -1000, 0), Quaternion.identity, new Vector3(1, 1, -1));
-            //Camera.main.worldToCameraMatrix = m * Camera.main.transform.worldToLocalMatrix;
+            transform.localPosition = lastPosition - Camera.main.transform.localPosition;
+            //transform.Translate(lastPosition-Camera.main.transform.localPosition-transform.localPosition,Space.World);
         }
-
-        //lastPosition = Camera.main.transform.position;
     }
 }
